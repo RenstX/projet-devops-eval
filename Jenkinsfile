@@ -1,16 +1,19 @@
 pipeline {
     agent any
 
-    options {
-        cleanWs()
-    }
-
     environment {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         ANSIBLE_CREDS = credentials('ANSIBLE_SSH_CREDS')
     }
 
     stages {
+        stage('0. Preparation') {
+            steps {
+                echo 'Nettoyage de l-espace de travail...'
+                cleanWs()
+            }
+        }
+        
         stage('1. Checkout') {
             steps {
                 echo 'Clonage du dépôt Git...'
@@ -58,7 +61,7 @@ pipeline {
 
     post {
         always {
-            echo 'Étape 6. Nettoyage de l\'environnement...'
+            echo 'Étape 6. Nettoyage de l-environnement...'
             bat 'docker stop ansible-target || echo "Container already stopped or does not exist."'
             bat 'docker rm ansible-target || echo "Container already removed or does not exist."'
         }
