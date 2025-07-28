@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        cleanWs()
+    }
+
     environment {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         ANSIBLE_CREDS = credentials('ANSIBLE_SSH_CREDS')
@@ -47,7 +51,7 @@ pipeline {
         stage('5. Verify Deployment') {
             steps {
                 echo 'Vérification du déploiement...'
-                bat 'curl http://localhost:8080/ | findstr /C:"Michael ERNST"'
+                bat 'curl http://localhost:8080/ | findstr /C:"ERNST Michael"'
             }
         }
     }
@@ -55,8 +59,8 @@ pipeline {
     post {
         always {
             echo 'Étape 6. Nettoyage de l\'environnement...'
-            bat 'docker stop ansible-target || true'
-            bat 'docker rm ansible-target || true'
+            bat 'docker stop ansible-target || echo "Container already stopped or does not exist."'
+            bat 'docker rm ansible-target || echo "Container already removed or does not exist."'
         }
     }
 }
