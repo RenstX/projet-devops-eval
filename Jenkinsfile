@@ -44,7 +44,15 @@ pipeline {
             steps {
                 echo 'Lancement du déploiement Ansible...'
                 withCredentials([usernamePassword(credentialsId: 'ANSIBLE_SSH_CREDS', usernameVariable: 'ANSIBLE_USER', passwordVariable: 'ANSIBLE_PASSWORD')]) {
-                    bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --user %ANSIBLE_USER% --extra-vars "ansible_password=%ANSIBLE_PASSWORD%"'
+                    script {
+                        // On récupère le chemin du workspace Jenkins sous Windows
+                        def windowsPath = pwd()
+                        // On le convertit en chemin pour WSL (ex: C:\... devient /mnt/c/...)
+                        def wslPath = windowsPath.replace("C:\\", "/mnt/c/").replace("\\", "/")
+                        
+                        // On exécute la commande en utilisant l'option --cd pour se placer dans le bon dossier
+                        bat "wsl --cd \"${wslPath}\" ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --user %ANSIBLE_USER% --extra-vars \"ansible_password=%ANSIBLE_PASSWORD%\""
+                    }
                 }
             }
         }
