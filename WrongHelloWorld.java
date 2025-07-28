@@ -1,4 +1,4 @@
-public class HelloWorld {
+public class WrongHelloWorld {
 
     public static void main(String[] args) {
         // Affiche un message de bienvenue
