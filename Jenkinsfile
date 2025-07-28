@@ -19,11 +19,15 @@ pipeline {
         stage('2. SonarQube Analysis') {
             steps {
                 echo 'Compilation et analyse SonarQube...'
-                // Étape de compilation pour Windows
-                bat 'javac HelloWorld.java'
                 
-                // Exécute l'analyse SonarQube en utilisant le token
-                withSonarQubeEnv('SonarQube') { // Nom du serveur dans Sonar dans Jenkins
+                // Crée le répertoire 'build' pour les fichiers compilés
+                bat 'mkdir build'
+                
+                // Compile le code Java et place le .class dans le dossier 'build'
+                bat 'javac -d build HelloWorld.java'
+                
+                // Exécute l'analyse SonarQube
+                withSonarQubeEnv('SonarQube') {
                     bat "sonar-scanner.bat -Dsonar.login=${SONAR_TOKEN}"
                 }
             }
