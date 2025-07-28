@@ -43,10 +43,8 @@ pipeline {
         stage('4. Deploy with Ansible') {
             steps {
                 echo 'Lancement du déploiement Ansible...'
-                ws('ansible') {
-                    withCredentials([usernamePassword(credentialsId: 'ANSIBLE_SSH_CREDS', usernameVariable: 'ANSIBLE_USER', passwordVariable: 'ANSIBLE_PASSWORD')]) {
-                        bat 'wsl ansible-playbook -i inventory.ini deploy.yml --user %ANSIBLE_USER% --extra-vars "ansible_password=%ANSIBLE_PASSWORD%"'
-                    }
+                withCredentials([usernamePassword(credentialsId: 'ANSIBLE_SSH_CREDS', usernameVariable: 'ANSIBLE_USER', passwordVariable: 'ANSIBLE_PASSWORD')]) {
+                    bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --user %ANSIBLE_USER% --extra-vars "ansible_password=%ANSIBLE_PASSWORD%"'
                 }
             }
         }
